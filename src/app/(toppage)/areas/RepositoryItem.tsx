@@ -1,5 +1,6 @@
 import { Avatar } from "@mantine/core";
 
+import { createGithubUserUrl } from "@/app/lib/github/repository";
 import React from "react";
 import styles from "./RepositoryItem.module.scss";
 const RepositoryItems: React.FC<{
@@ -9,7 +10,7 @@ const RepositoryItems: React.FC<{
   description: string;
 }> = ({ name, owner, avatarUrl, description }) => {
   return <li className={styles.repository_wrapper}>
-          <a href={`https://github.com/${owner}/`}>
+          <a href={createGithubUserUrl(owner)}>
             <Avatar
               className={styles.avatar}
               src={avatarUrl}
