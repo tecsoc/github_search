@@ -4,6 +4,7 @@ import { apolloClient } from "@/app/lib/apollo/ApolloClient";
 import { createGithubUserUrl, createRepositoryUrl } from "@/app/lib/github/repository";
 import { gql } from "@apollo/client";
 import { Avatar } from "@mantine/core";
+import { notFound } from "next/navigation";
 import styles from "./RepositoryInfoPage.module.scss";
 
 export type RepositoryInfoPageType = {
@@ -49,7 +50,11 @@ export const RepositoryInfoPage: React.FC<RepositoryInfoPageType> = async ({ par
     }
   });
 
-  const repository = data.repository;
+  if (error) {
+    return notFound();
+  };
+
+  const repository = data?.repository;
   return <>
     <div className={styles.repository_name_block}>
       <a href={createGithubUserUrl(owner)}>
