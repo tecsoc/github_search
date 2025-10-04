@@ -96,6 +96,7 @@ export const Home = () => {
               name={name}
               owner={owner["login"]}
               avatarUrl={owner["avatarUrl"]}
+              description={item["description"]}
             />;
           })}
         </ul>

@@ -3,6 +3,13 @@ import { gql } from "@apollo/client";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from "@mantine/core";
 import styles from "./RepositoryInfoPage.module.scss";
 
+export type RepositoryInfoPageType = {
+  params: Promise<{
+    owner: string;
+    repositoryName: string;
+  }>;
+};
+
 const REPOSITORY_INFO_QUERY = gql`
   query GetRepository($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
@@ -28,7 +35,7 @@ const REPOSITORY_INFO_QUERY = gql`
     }
   }`
 
-export const RepositoryInfoPage = async ({ params }) => {
+export const RepositoryInfoPage: React.FC<RepositoryInfoPageType> = async ({ params }) => {
   const { owner, repositoryName } = await params;
 
   const { data, error } = await apolloClient.query({
@@ -51,6 +58,7 @@ export const RepositoryInfoPage = async ({ params }) => {
       </a>
       <div className={styles.repository_name_area}>
         <h2>{repositoryName}</h2>
+        <p>{repository["description"]}</p>
         <h3><span className={styles.language}>{repository["primaryLanguage"]["name"]}</span></h3>
       </div>
     </div>

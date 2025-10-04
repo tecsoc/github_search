@@ -6,7 +6,8 @@ const RepositoryItems: React.FC<{
   name: string;
   owner: string;
   avatarUrl: string;
-}> = ({ name, owner, avatarUrl }) => {
+  description: string;
+}> = ({ name, owner, avatarUrl, description }) => {
   return <li className={styles.repository_wrapper}>
           <a href={`https://github.com/${owner}/`}>
             <Avatar
@@ -16,7 +17,10 @@ const RepositoryItems: React.FC<{
               radius={100}
             />
           </a>
-          <h2><a href={`/repositories/${owner}/${name}/`}>{name}</a></h2>
+          <div>
+            <h2><a href={`/${owner}/${name}/`}>{name}</a></h2>
+            <p>{description}</p>
+          </div>
         </li>
 }
 export default React.memo(RepositoryItems);
