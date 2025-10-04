@@ -7,6 +7,7 @@ import { useLazyQuery } from "@apollo/client/react";
 import { Button, Select, TextInput } from "@mantine/core";
 import { useCallback, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";
+import Loading from "../../atoms/Loading/Loading";
 import styles from "./Home.module.scss";
 
 export type RepositoryEdge = {
@@ -133,11 +134,12 @@ export const Home: React.FC = () => {
         />
         <Button variant={"light"} size="md" onClick={handleSearchButton}>検索</Button>
       </div>
+      {loading && <Loading color="blue" />}
       <InfiniteScroll
         pageStart={0}
         loadMore={loadMore}
         hasMore={!!data?.search?.pageInfo.hasNextPage}
-        loader={<div key={0}>Loading ...</div>}
+        loader={<Loading key={0} color="blue" />}
       >
         <ul className={styles.repositories}>
           {sortRepositories(data?.search?.edges ?? [], sortOrder).map((node, index) => {
