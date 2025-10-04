@@ -6,6 +6,15 @@
   padding: 10px 30px;
   border: 1px solid gray;
   border-radius: 16px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  @media (min-width: 600px) {
+    padding: 10px 30px;
+    gap: 40px;
+  }
+  padding: 8px 10px;
+  gap: 16px;
 }
 
 .star_language_wrapper {
