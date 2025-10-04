@@ -81,22 +81,24 @@ export default function Home() {
         <Button variant={"light"} size="md" onClick={handleSearchButton}>検索</Button>
       </div>
       <InfiniteScroll
-        className={styles.repositories}
-        pageStart={0}
-        loadMore={loadMore}
-        hasMore={!!data?.search.pageInfo.hasNextPage}
-        loader={<div key={0}>Loading ...</div>}
-      >
-        {data?.search?.edges.map((node, index: string) => {
-          const item = node["node"]
-          const name = item["name"]
-          const owner = item["owner"]
-          return <RepositoryItem
-            key={index}
-            name={name}
-            avatarUrl={owner["avatarUrl"]}
-          />;
-        })}
+          pageStart={0}
+          loadMore={loadMore}
+          hasMore={!!data?.search.pageInfo.hasNextPage}
+          loader={<div key={0}>Loading ...</div>}
+        >
+        <ul className={styles.repositories}>
+          {data?.search?.edges.map((node, index: string) => {
+            const item = node["node"]
+            const name = item["name"]
+            const owner = item["owner"]
+            return <RepositoryItem
+              key={index}
+              name={name}
+              owner={owner["login"]}
+              avatarUrl={owner["avatarUrl"]}
+            />;
+          })}
+        </ul>
       </InfiniteScroll>
     </main>
   );

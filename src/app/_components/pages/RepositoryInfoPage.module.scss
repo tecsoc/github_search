@@ -1,0 +1,18 @@
+.repository_name_block {
+  display: flex;
+  gap: 24;
+  margin: 24px 0;
+}
+
+.repository_name_area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .language {
+    background-color: #35bae3;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+}
