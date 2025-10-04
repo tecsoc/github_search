@@ -8,7 +8,8 @@ const RepositoryItems: React.FC<{
   owner: string;
   avatarUrl: string;
   description: string;
-}> = ({ name, owner, avatarUrl, description }) => {
+  stargazerCount: number;
+}> = ({ name, owner, avatarUrl, description, stargazerCount }) => {
   return <li className={styles.repository_wrapper}>
           <a href={createGithubUserUrl(owner)}>
             <Avatar
@@ -21,6 +22,7 @@ const RepositoryItems: React.FC<{
           <div>
             <h2><a href={`/${owner}/${name}/`}>{name}</a></h2>
             <p>{description}</p>
+            <p>⭐ {stargazerCount}</p>
           </div>
         </li>
 }
