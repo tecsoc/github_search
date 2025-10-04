@@ -2,6 +2,7 @@
 
 import RepositoryItem from "@/app/(toppage)/areas/RepositoryItem";
 import { sortRepositories } from "@/app/lib/github/repository";
+import { RepositoryEdge, SearchRepositoriesQuery } from "@/gql/graphql";
 import { gql } from "@apollo/client";
 import { useLazyQuery } from "@apollo/client/react";
 import { Button, Select, TextInput } from "@mantine/core";
@@ -10,31 +11,6 @@ import InfiniteScroll from "react-infinite-scroller";
 import Loading from "../../atoms/Loading/Loading";
 import styles from "./Home.module.scss";
 
-export type RepositoryEdge = {
-  node: {
-    name: string;
-    description: string;
-    stargazerCount?: number;
-    owner: {
-      login: string;
-      avatarUrl: string;
-    };
-    primaryLanguage?: {
-      name: string;
-    };
-  };
-};
-
-type SearchRepositoriesData = {
-  search: {
-    repositoryCount: number;
-    pageInfo: {
-      endCursor: string;
-      hasNextPage: boolean;
-    };
-    edges: RepositoryEdge[];
-  };
-};
 const SORT_OPTIONS = [
   { value: "none", label: "" },
   { value: "desc", label: "Star数が多い順）" },
@@ -76,15 +52,15 @@ const SEARCH_REPOSITORIES = gql`
 
 export const Home: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<string>("none");
-  const languageRef = useRef<HTMLInputElement>("");
+  const languageRef = useRef<HTMLInputElement>(null);
 
   const queryRef = useRef<HTMLInputElement>(null);
-  const [searchRepos, { data, loading, fetchMore }] = useLazyQuery<SearchRepositoriesData>(SEARCH_REPOSITORIES);
+  const [searchRepos, { data, loading, fetchMore }] = useLazyQuery<SearchRepositoriesQuery>(SEARCH_REPOSITORIES);
   const handleSearchButton = useCallback(() => {
     if (!queryRef.current?.value) return;
     let query = queryRef.current?.value;
-    if (languageRef.current.value) {
-      query += ` language:${languageRef.current.value}`;
+    if (languageRef?.current?.value) {
+      query += ` language:${languageRef?.current?.value}`;
     }
     searchRepos({ variables: { query, first: 10 } });
   },[searchRepos]);
@@ -105,8 +81,8 @@ export const Home: React.FC = () => {
           search: {
             ...fetchMoreResult.search,
             edges: [
-              ...previousResult.search.edges,
-              ...fetchMoreResult.search.edges,
+              ...(previousResult.search.edges ?? []),
+              ...(fetchMoreResult.search.edges ?? []),
             ],
           },
         };
@@ -142,20 +118,35 @@ export const Home: React.FC = () => {
         loader={<Loading key={0} color="blue" />}
       >
         <ul className={styles.repositories}>
-          {sortRepositories(data?.search?.edges ?? [], sortOrder).map((node, index) => {
-            const item = node.node;
-            const name = item.name;
-            const owner = item.owner;
-            return <RepositoryItem
-              key={index}
-              name={name}
-              owner={owner["login"]}
-              avatarUrl={owner["avatarUrl"]}
-              description={item["description"]}
-              stargazerCount={item.stargazerCount ?? 0}
-              primaryLanguage={item.primaryLanguage?.name ?? ""}
-            />;
-          })}
+  {sortRepositories(
+    (data?.search?.edges ?? [])
+      // 型ガード
+      .map(edge => {
+        if (
+          edge &&
+          edge.node &&
+          edge.node.__typename === "Repository"
+        ) {
+          return edge as RepositoryEdge;
+        }
+        return null;
+      })
+      .filter((edge): edge is RepositoryEdge => edge !== null),
+    sortOrder
+  ).map((node, index) => {
+    const item = node.node;
+    const name = item?.name;
+    const owner = item?.owner;
+    return <RepositoryItem
+      key={index}
+      name={name ?? ""}
+      owner={owner?.login ?? ""}
+      avatarUrl={owner?.avatarUrl}
+      description={item?.description ?? ""}
+      stargazerCount={item?.stargazerCount ?? 0}
+      primaryLanguage={item?.primaryLanguage?.name ?? ""}
+    />;
+  })}
         </ul>
       </InfiniteScroll>
     </main>
