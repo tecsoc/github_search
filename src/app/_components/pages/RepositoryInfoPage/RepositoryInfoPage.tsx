@@ -39,7 +39,6 @@ export const RepositoryInfoPage = async ({ params }) => {
     }
   });
 
-  console.log({data, error})
   const repository = data.repository;
   return <>
     <div className={styles.repository_name_block}>
