@@ -1,15 +1,18 @@
 import { Avatar } from "@mantine/core";
 
+import { Chip } from "@/app/_components/atoms/Chip/Chip";
 import { createGithubUserUrl } from "@/app/lib/github/repository";
 import React from "react";
 import styles from "./RepositoryItem.module.scss";
+
 const RepositoryItems: React.FC<{
   name: string;
   owner: string;
   avatarUrl: string;
   description: string;
   stargazerCount: number;
-}> = ({ name, owner, avatarUrl, description, stargazerCount }) => {
+  primaryLanguage: string;
+}> = ({ name, owner, avatarUrl, description, stargazerCount, primaryLanguage }) => {
   return <li className={styles.repository_wrapper}>
           <a href={createGithubUserUrl(owner)}>
             <Avatar
@@ -22,7 +25,10 @@ const RepositoryItems: React.FC<{
           <div>
             <h2><a href={`/${owner}/${name}/`}>{name}</a></h2>
             <p>{description}</p>
-            <p>⭐ {stargazerCount}</p>
+            <div className={styles.star_language_wrapper}>
+              <span>⭐ {stargazerCount}</span>
+              {primaryLanguage && <Chip name={primaryLanguage} />}
+            </div>
           </div>
         </li>
 }

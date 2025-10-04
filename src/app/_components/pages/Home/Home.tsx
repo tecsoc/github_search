@@ -18,6 +18,9 @@ export type RepositoryEdge = {
       login: string;
       avatarUrl: string;
     };
+    primaryLanguage?: {
+      name: string;
+    };
   };
 };
 
@@ -69,16 +72,21 @@ const SEARCH_REPOSITORIES = gql`
       }
     }
   }`
-export const Home = () => {
+
+export const Home: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<string>("none");
+  const languageRef = useRef<HTMLInputElement>("");
 
   const queryRef = useRef<HTMLInputElement>(null);
   const [searchRepos, { data, loading, fetchMore }] = useLazyQuery<SearchRepositoriesData>(SEARCH_REPOSITORIES);
   const handleSearchButton = useCallback(() => {
     if (!queryRef.current?.value) return;
-    console.log({data})
-    searchRepos({ variables: { query: queryRef.current?.value, first: 10 } });
-  },[data, searchRepos]);
+    let query = queryRef.current?.value;
+    if (languageRef.current.value) {
+      query += ` language:${languageRef.current.value}`;
+    }
+    searchRepos({ variables: { query, first: 10 } });
+  },[searchRepos]);
 
   const loadMore = useCallback( () => {
     if (!queryRef.current?.value) return;
@@ -110,6 +118,13 @@ export const Home = () => {
       <div className={styles.search_wrapper}>
         <TextInput ref={queryRef} className={styles.text_input} placeholder="リポジトリ名" required />
         <Select
+          ref={languageRef}
+          data={[{ value: "", label: "全言語" }, { value: "TypeScript", label: "TypeScript" }, { value: "JavaScript", label: "JavaScript" }, { value: "Python", label: "Python" }, { value: "Go", label: "Go" }, { value: "Java", label: "Java" }, { value: "C++", label: "C++" }, { value: "C#", label: "C#" }]}
+          defaultValue={""}
+          placeholder="言語で絞り込み"
+          style={{ minWidth: 180 }}
+        />
+        <Select
           data={SORT_OPTIONS}
           value={sortOrder}
           onChange={value => setSortOrder(value ?? "desc")}
@@ -136,6 +151,7 @@ export const Home = () => {
               avatarUrl={owner["avatarUrl"]}
               description={item["description"]}
               stargazerCount={item.stargazerCount ?? 0}
+              primaryLanguage={item.primaryLanguage?.name ?? ""}
             />;
           })}
         </ul>
