@@ -63,6 +63,7 @@ export const RepositoryInfoPage: React.FC<RepositoryInfoPageType> = async ({ par
           src={repository["owner"]["avatarUrl"]}
           size={100}
           radius={100}
+          alt={`${owner}のアバター`}
         />
       </a>
       <div className={styles.repository_name_area}>

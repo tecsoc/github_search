@@ -20,6 +20,7 @@ const RepositoryItems: React.FC<{
               src={avatarUrl}
               size={100}
               radius={100}
+              alt={`${owner}のアバター`}
             />
           </a>
           <div>
