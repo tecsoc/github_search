@@ -1,7 +1,8 @@
-import StarCountTable from "@/app/(toppage)/[owner]/[repositoryName]/areas/StarCountTable/StarCountTable";
 import { Chip } from "@/app/_components/atoms/Chip/Chip";
+import StarCountTable from "@/app/_components/pages/RepositoryInfoPage/areas/StarCountTable/StarCountTable";
 import { apolloClient } from "@/app/lib/apollo/ApolloClient";
 import { createGithubUserUrl, createRepositoryUrl } from "@/app/lib/github/repository";
+import { GetRepositoryQuery } from "@/gql/graphql";
 import { gql } from "@apollo/client";
 import { Avatar } from "@mantine/core";
 import { notFound } from "next/navigation";
@@ -42,7 +43,7 @@ const REPOSITORY_INFO_QUERY = gql`
 export const RepositoryInfoPage: React.FC<RepositoryInfoPageType> = async ({ params }) => {
   const { owner, repositoryName } = await params;
 
-  const { data, error } = await apolloClient.query({
+  const { data, error } = await apolloClient.query<GetRepositoryQuery>({
     query: REPOSITORY_INFO_QUERY,
     variables: {
       owner,
@@ -50,11 +51,11 @@ export const RepositoryInfoPage: React.FC<RepositoryInfoPageType> = async ({ par
     }
   });
 
-  if (error) {
+  const repository = data?.repository;
+  if (error || !repository) {
     return notFound();
   };
 
-  const repository = data?.repository;
   return <>
     <div className={styles.repository_name_block}>
       <a href={createGithubUserUrl(owner)}>

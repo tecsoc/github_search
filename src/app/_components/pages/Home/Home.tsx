@@ -1,6 +1,6 @@
 "use client";
 
-import RepositoryItem from "@/app/(toppage)/areas/RepositoryItem";
+import RepositoryItem from "@/app/_components/pages/Home/areas/RepositoryItem";
 import { sortRepositories } from "@/app/lib/github/repository";
 import { RepositoryEdge, SearchRepositoriesQuery } from "@/gql/graphql";
 import { gql } from "@apollo/client";
