@@ -13,7 +13,7 @@ import styles from "./Home.module.scss";
 
 const SORT_OPTIONS = [
   { value: "none", label: "" },
-  { value: "desc", label: "Star数が多い順）" },
+  { value: "desc", label: "Star数が多い順" },
   { value: "asc", label: "Star数が少ない順" },
 ];
 
@@ -62,8 +62,11 @@ export const Home: React.FC = () => {
     if (languageRef?.current?.value) {
       query += ` language:${languageRef?.current?.value}`;
     }
+    if( sortOrder !== "none" ) {
+      query += ` sort:stars-${sortOrder}`;
+    }
     searchRepos({ variables: { query, first: 10 } });
-  },[searchRepos]);
+  },[searchRepos, sortOrder]);
 
   const loadMore = useCallback( () => {
     if (!queryRef.current?.value) return;
